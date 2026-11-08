@@ -1,0 +1,456 @@
+@import "tailwindcss";
+@custom-variant dark (&:where(.dark, .dark *));
+
+@property --ang {
+  syntax: "<angle>";
+  initial-value: 0deg;
+  inherits: false;
+}
+
+:root {
+  --gold: #ffc83a;
+  --gold2: #b8860b;
+  --green: #18e060;
+  --red: #ff2a2a;
+  --bg: #050505;
+  --cyan: #17f0e0;
+}
+
+@layer base {
+  body {
+    font-family: "Segoe UI", system-ui, -apple-system, BlinkMacSystemFont, Roboto, Arial, sans-serif;
+    background-color: #f7f8ff;
+    color: #1e293b;
+    overflow-x: hidden;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  .font-mono {
+    font-family: 'JetBrains Mono', monospace;
+    font-variant-numeric: tabular-nums;
+  }
+}
+
+.tabular-nums {
+  font-variant-numeric: tabular-nums;
+}
+
+@keyframes spinRing {
+  to {
+    --ang: 360deg;
+  }
+}
+
+@keyframes radarScan {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes tfBorder {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes signalRing {
+  0%, 100% {
+    inset: 3px;
+    opacity: 0.85;
+    transform: scale(1);
+  }
+  50% {
+    inset: 7px;
+    opacity: 0.35;
+    transform: scale(0.985);
+  }
+}
+
+@keyframes signalSweep {
+  to {
+    top: 140%;
+  }
+}
+
+@keyframes softPulse {
+  0%, 100% {
+    transform: scale(1);
+    box-shadow: 0 0 4px var(--red);
+  }
+  50% {
+    transform: scale(1.08);
+    box-shadow: 0 0 12px var(--red);
+  }
+}
+
+@keyframes cyanPulse {
+  0%, 100% {
+    transform: scale(1);
+    box-shadow: 0 0 4px var(--cyan);
+  }
+  50% {
+    transform: scale(1.04);
+    box-shadow: 0 0 12px var(--cyan);
+  }
+}
+
+@keyframes bellRing {
+  0%, 100% { transform: rotate(0); }
+  15% { transform: rotate(18deg); }
+  30% { transform: rotate(-18deg); }
+  45% { transform: rotate(12deg); }
+  60% { transform: rotate(-12deg); }
+  75% { transform: rotate(6deg); }
+}
+
+/* Floating HUD Simulator Box (Exact Match to Screenshot) */
+.hud-widget {
+  position: fixed;
+  z-index: 999;
+  touch-action: none;
+  user-select: none;
+}
+
+.hud-phone {
+  width: 264px;
+  border-radius: 20px;
+  padding: 3.5px;
+  background: conic-gradient(from var(--ang), #18e060 0, #0077ff 33%, #ff2a2a 66%, #18e060 100%);
+  animation: 3s linear infinite spinRing;
+  box-shadow: 0 10px 28px rgba(0, 0, 0, 0.7), 0 0 20px rgba(24, 224, 96, 0.45), 0 0 36px rgba(255, 42, 42, 0.2);
+}
+
+@media (max-width: 420px) {
+  .hud-phone {
+    width: 248px;
+  }
+}
+
+.hud-phone.minimized {
+  width: 58px !important;
+  height: 58px !important;
+  border-radius: 50% !important;
+  padding: 3.5px !important;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.hud-screen {
+  background: #050505;
+  border-radius: 17px;
+  padding: 6px 8px 8px;
+  color: #fff;
+  position: relative;
+  overflow: hidden;
+}
+
+.hud-brand-title {
+  font-size: 12.5px;
+  font-weight: 900;
+  letter-spacing: 0.4px;
+  background: linear-gradient(#fff2b0, var(--gold) 50%, var(--gold2));
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  filter: drop-shadow(0 0 6px rgba(255, 200, 58, 0.6));
+}
+
+.hud-brand-sub {
+  font-size: 8px;
+  font-weight: 800;
+  letter-spacing: 2px;
+  margin-top: 1px;
+  background: linear-gradient(#fff, #8a8a8a);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+.hud-icon-btn {
+  width: 24px;
+  height: 24px;
+  border-radius: 7px;
+  border: 1.2px solid var(--gold);
+  background: #0a0a0a;
+  display: grid;
+  place-items: center;
+  color: var(--gold);
+  font-size: 11px;
+  cursor: pointer;
+  position: relative;
+  flex-shrink: 0;
+}
+
+.hud-icon-btn.ringing {
+  animation: 0.8s ease-in-out infinite bellRing;
+  color: #fff;
+  border-color: #fff;
+  box-shadow: 0 0 10px var(--gold);
+}
+
+.hud-scan-container {
+  position: absolute;
+  width: 76px;
+  height: 76px;
+  border-radius: 50%;
+  border: 1px solid rgba(23, 240, 224, 0.32);
+  box-shadow: 0 0 12px rgba(23, 240, 224, 0.2), inset 0 0 12px rgba(23, 240, 224, 0.2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
+}
+
+.hud-scan-container::before,
+.hud-scan-container::after {
+  border-radius: 50%;
+  content: "";
+  position: absolute;
+}
+
+.hud-scan-container::before {
+  inset: 0;
+  background: conic-gradient(from 0deg, rgba(23, 240, 224, 0.85) 0deg, rgba(23, 240, 224, 0.1) 60deg, transparent 90deg);
+  animation: 2s linear infinite radarScan;
+  mask: radial-gradient(circle, transparent 35%, #000 36%);
+  -webkit-mask: radial-gradient(circle, transparent 35%, #000 36%);
+}
+
+.hud-scan-container::after {
+  inset: 5px;
+  border: 1px dashed rgba(255, 200, 58, 0.55);
+  animation: 4s linear infinite reverse radarScan;
+}
+
+.hud-number-ball {
+  width: 52px;
+  height: 52px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 26px;
+  font-weight: 900;
+  line-height: 1;
+  text-shadow: 0 1px 2px #fff8, 0 2px 3px #0007;
+  border: 4.5px solid var(--ball);
+  background: radial-gradient(circle at 34% 24%, #fff 0 14%, #f8f8f8 34%, var(--pale) 66%, var(--ball) 100%);
+  box-shadow: inset 0 2px 3px #fff9, inset 0 -4px 5px #0002, 0 1px 3px #0008;
+  position: relative;
+  z-index: 2;
+}
+
+.hud-number-ball::before {
+  content: "";
+  position: absolute;
+  inset: -4.5px;
+  border: 2.5px solid var(--ball);
+  border-radius: 50%;
+  border-left-color: #ffffff99;
+  border-top-color: #ffffffb8;
+  box-shadow: inset 0 0 0 1.5px #ffffff2b;
+  pointer-events: none;
+}
+
+.hud-number-ball.red {
+  --ball: #ff263f;
+  --pale: #ffdfe4;
+  color: #ef2338;
+}
+
+.hud-number-ball.green {
+  --ball: #05c987;
+  --pale: #d8fff0;
+  color: #00a96b;
+}
+
+.hud-number-ball.purple {
+  --ball: #a22bff;
+  --pale: #f0d9ff;
+  color: #9229e9;
+}
+
+.hud-number-ball.mix::after {
+  content: "";
+  position: absolute;
+  inset: -2px;
+  border-radius: 50%;
+  background: linear-gradient(130deg, transparent 0 42%, #9c24f1 43% 66%, transparent 67%);
+  opacity: 0.9;
+  pointer-events: none;
+  mix-blend-mode: multiply;
+}
+
+.hud-tf {
+  width: 100%;
+  margin-top: 4px;
+  background: #04200e;
+  border: 1.2px solid var(--green);
+  border-radius: 6px;
+  color: #baffd0;
+  padding: 2.5px 0;
+  font-weight: 900;
+  font-size: 10.5px;
+  text-align: center;
+  box-shadow: 0 0 10px rgba(24, 224, 96, 0.35);
+  position: relative;
+  overflow: hidden;
+  isolation: isolate;
+}
+
+.hud-tf::before {
+  content: "";
+  position: absolute;
+  inset: -2px;
+  border: 1px solid transparent;
+  border-radius: 6px;
+  background: conic-gradient(from 0deg, transparent 0 48%, #d7ffe4 58%, var(--green) 68%, transparent 78%) border-box;
+  mask: linear-gradient(#000 0 0) padding-box, linear-gradient(#000 0 0);
+  mask-composite: exclude;
+  animation: 2s linear infinite tfBorder;
+  pointer-events: none;
+}
+
+.hud-signal-wrapper {
+  border-radius: 12px;
+  padding: 2.5px;
+  background: conic-gradient(from var(--ang), #17f0e0 0, #0077ff 33%, #ff2a2a 66%, #17f0e0 100%);
+  animation: 2.5s linear infinite spinRing;
+  box-shadow: 0 0 14px rgba(23, 240, 224, 0.55), 0 0 22px rgba(0, 119, 255, 0.35);
+  position: relative;
+}
+
+.hud-signal-wrapper.big-wrap {
+  background: conic-gradient(from var(--ang), #18e060 0, #ffc83a 33%, #05c987 66%, #18e060 100%);
+  box-shadow: 0 0 14px rgba(24, 224, 96, 0.65), 0 0 22px rgba(255, 200, 58, 0.35);
+}
+
+.hud-signal-display {
+  min-height: 50px;
+  border-radius: 10px;
+  padding: 5px 6px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+  font-weight: 900;
+  letter-spacing: 1.5px;
+  color: #fff;
+  background: linear-gradient(135deg, #00cce8, #07517d 72%, #063044);
+  text-shadow: 0 2px 3px rgba(0, 0, 0, 0.5), 0 0 10px rgba(255, 255, 255, 0.35);
+  position: relative;
+  overflow: hidden;
+  isolation: isolate;
+}
+
+.hud-signal-display.big {
+  background: linear-gradient(135deg, #00ef75, #078b49 70%, #034d32);
+}
+
+.hud-signal-display::after {
+  content: "";
+  position: absolute;
+  inset: 2.5px;
+  border: 1px solid rgba(255, 255, 255, 0.65);
+  border-radius: 8px;
+  pointer-events: none;
+  animation: 2.2s linear infinite signalRing;
+}
+
+.hud-signal-display::before {
+  content: "";
+  position: absolute;
+  z-index: -1;
+  left: -20%;
+  top: -70%;
+  width: 140%;
+  height: 35%;
+  background: linear-gradient(180deg, transparent, rgba(255, 255, 255, 0.45), transparent);
+  transform: rotate(-8deg);
+  animation: 2.6s linear infinite signalSweep;
+}
+
+.hud-stats {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  border-radius: 9px;
+  padding: 3.5px 2px;
+  background: #080808;
+  border: 1.2px solid var(--cyan);
+  box-shadow: 0 0 8px rgba(23, 240, 224, 0.35);
+}
+
+.hud-min-btn {
+  background: transparent;
+  border: 1px solid var(--red);
+  color: var(--red);
+  width: 20px;
+  height: 20px;
+  border-radius: 5px;
+  font-size: 12px;
+  font-weight: 900;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  animation: 2s ease-in-out infinite softPulse;
+  cursor: pointer;
+}
+
+.hud-tg-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 6px 4px;
+  background: #080808;
+  border-radius: 9px;
+  border: 1.2px solid var(--cyan);
+  color: var(--cyan);
+  font-size: 9.5px;
+  font-weight: 900;
+  letter-spacing: 0.4px;
+  text-shadow: 0 0 8px rgba(23, 240, 224, 0.7);
+  animation: 2s ease-in-out infinite cyanPulse;
+  cursor: pointer;
+}
+
+/* DKWIN 3D Casino Number Balls */
+.dkwin-ball {
+  position: relative;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 800;
+  box-shadow: inset 0 3px 5px rgba(255,255,255,0.85), inset 0 -4px 6px rgba(0,0,0,0.18), 0 3px 6px rgba(0,0,0,0.12);
+}
+
+.dkwin-ball-green {
+  border: 5px solid #18b660;
+  background: radial-gradient(circle at 35% 25%, #ffffff 0%, #e8fff2 55%, #b5f5d2 100%);
+  color: #18b660;
+}
+
+.dkwin-ball-red {
+  border: 5px solid #fb5b5b;
+  background: radial-gradient(circle at 35% 25%, #ffffff 0%, #ffebeb 55%, #ffc5c5 100%);
+  color: #fb5b5b;
+}
+
+.dkwin-ball-0 {
+  border: 5px solid #fb5b5b;
+  border-bottom-color: #b659fe;
+  border-left-color: #b659fe;
+  background: radial-gradient(circle at 35% 25%, #ffffff 0%, #f7ebff 55%, #e5c7ff 100%);
+  color: #b659fe;
+}
+
+.dkwin-ball-5 {
+  border: 5px solid #18b660;
+  border-bottom-color: #b659fe;
+  border-left-color: #b659fe;
+  background: radial-gradient(circle at 35% 25%, #ffffff 0%, #f7ebff 55%, #e5c7ff 100%);
+  color: #b659fe;
+}

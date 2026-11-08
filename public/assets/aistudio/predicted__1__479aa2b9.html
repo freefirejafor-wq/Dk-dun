@@ -1,0 +1,1288 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>WINGO PATTERN ENGINE</title>
+
+<style>
+
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+}
+
+body{
+background:#020812;
+color:#00ffee;
+font-family:Consolas,monospace;
+overflow-x:hidden;
+}
+
+/* MATRIX */
+
+#matrix{
+position:fixed;
+inset:0;
+z-index:0;
+}
+
+body::after{
+content:'';
+position:fixed;
+inset:0;
+background:
+linear-gradient(
+to bottom,
+rgba(0,255,255,.04),
+rgba(0,255,255,.01),
+rgba(0,255,255,.04)
+);
+animation:scan 4s linear infinite;
+pointer-events:none;
+z-index:1;
+}
+
+@keyframes scan{
+from{transform:translateY(-100%)}
+to{transform:translateY(100%)}
+}
+
+/* HEADER */
+
+header{
+position:relative;
+z-index:2;
+text-align:center;
+padding:20px;
+font-size:24px;
+font-weight:900;
+letter-spacing:2px;
+text-shadow:0 0 25px #00ffee;
+}
+
+/* CARD */
+
+.card{
+position:relative;
+z-index:2;
+margin:14px;
+padding:18px;
+border-radius:18px;
+background:rgba(0,0,0,.65);
+border:1px solid rgba(0,255,255,.25);
+box-shadow:
+0 0 25px rgba(0,255,255,.18),
+inset 0 0 25px rgba(0,255,255,.05);
+}
+
+/* BUTTONS */
+
+.buttons{
+display:flex;
+gap:10px;
+margin-bottom:15px;
+flex-wrap:wrap;
+}
+
+.btn{
+flex:1;
+padding:12px;
+border:none;
+border-radius:12px;
+background:#081521;
+color:#00ffee;
+cursor:pointer;
+font-weight:700;
+border:1px solid rgba(0,255,255,.2);
+}
+
+.active{
+background:#00ffee;
+color:#000;
+}
+
+/* TOP */
+
+.top{
+display:flex;
+justify-content:space-between;
+align-items:center;
+}
+
+/* TIMER */
+
+.timer-wrap{
+position:relative;
+width:100px;
+height:100px;
+}
+
+.timer-wrap svg{
+transform:rotate(-90deg);
+}
+
+.timer-text{
+position:absolute;
+inset:0;
+display:flex;
+align-items:center;
+justify-content:center;
+font-size:22px;
+font-weight:900;
+text-shadow:0 0 15px #00ffee;
+}
+
+/* PERIOD */
+
+.period{
+text-align:right;
+font-size:13px;
+color:#9ff;
+}
+
+/* PREDICTION */
+
+.predict{
+text-align:center;
+margin-top:20px;
+}
+
+.predict-title{
+font-size:13px;
+color:#9ff;
+margin-bottom:10px;
+}
+
+.predict-main{
+font-size:56px;
+font-weight:900;
+animation:glitch 2s infinite;
+}
+
+@keyframes glitch{
+20%{transform:translate(-2px,1px)}
+40%{transform:translate(2px,-1px)}
+60%{transform:translate(-1px,2px)}
+}
+
+.big{
+color:#00ff66;
+text-shadow:0 0 25px #00ff66;
+}
+
+.small{
+color:#ff3355;
+text-shadow:0 0 25px #ff3355;
+}
+
+.number{
+margin-top:10px;
+font-size:45px;
+font-weight:900;
+color:#00bbff;
+text-shadow:0 0 20px #00bbff;
+}
+
+.color{
+margin-top:6px;
+font-size:20px;
+font-weight:900;
+}
+
+/* CONF */
+
+.conf{
+margin-top:20px;
+}
+
+.bar{
+width:100%;
+height:12px;
+background:#111;
+border-radius:12px;
+overflow:hidden;
+}
+
+.fill{
+height:100%;
+width:0%;
+background:linear-gradient(90deg,#00ffee,#00ff66);
+box-shadow:0 0 15px #00ffee;
+}
+
+/* PATTERN */
+
+.pattern-box{
+margin-top:18px;
+padding:18px;
+border-radius:14px;
+background:rgba(0,0,0,.35);
+border:1px solid rgba(0,255,255,.2);
+}
+
+.pattern-title{
+font-size:14px;
+font-weight:900;
+margin-bottom:12px;
+text-shadow:0 0 10px #00ffee;
+}
+
+.pattern-content{
+font-size:14px;
+line-height:1.7;
+color:#9ff;
+animation:fade .4s ease;
+}
+
+@keyframes fade{
+from{
+opacity:0;
+transform:translateY(10px);
+}
+to{
+opacity:1;
+transform:translateY(0);
+}
+}
+
+/* STATS */
+
+.stats{
+display:grid;
+grid-template-columns:repeat(2,1fr);
+gap:10px;
+margin-top:18px;
+}
+
+.stat{
+padding:12px;
+border-radius:14px;
+background:rgba(0,0,0,.35);
+border:1px solid rgba(0,255,255,.2);
+text-align:center;
+}
+
+.green{
+color:#00ff66;
+}
+
+.red{
+color:#ff3355;
+}
+
+/* TABLE */
+
+table{
+width:100%;
+border-collapse:collapse;
+margin-top:12px;
+}
+
+th,td{
+padding:8px;
+text-align:center;
+font-size:13px;
+}
+
+th{
+background:rgba(0,255,255,.12);
+}
+
+tr:nth-child(even){
+background:rgba(0,255,255,.03);
+}
+
+.dot{
+width:11px;
+height:11px;
+border-radius:50%;
+display:inline-block;
+}
+
+.c-red{
+background:#ff3355;
+}
+
+.c-green{
+background:#00ff66;
+}
+
+.c-violet{
+background:#bb77ff;
+}
+
+</style>
+</head>
+
+<body>
+
+<canvas id="matrix"></canvas>
+
+<header>
+⚡ WINGO PATTERN ENGINE ⚡
+</header>
+
+<div class="card">
+
+<div class="buttons">
+
+<button class="btn active"
+onclick="changeMode('30s',this)">
+30S
+</button>
+
+<button class="btn"
+onclick="changeMode('1m',this)">
+1M
+</button>
+
+<button class="btn"
+onclick="changeMode('3m',this)">
+3M
+</button>
+
+<button class="btn"
+onclick="changeMode('5m',this)">
+5M
+</button>
+
+</div>
+
+<div class="top">
+
+<div class="timer-wrap">
+
+<svg width="100" height="100">
+
+<circle
+cx="50"
+cy="50"
+r="42"
+stroke="#111"
+stroke-width="7"
+fill="none"/>
+
+<circle
+id="timerCircle"
+cx="50"
+cy="50"
+r="42"
+stroke="#00ffee"
+stroke-width="7"
+fill="none"/>
+
+</svg>
+
+<div class="timer-text"
+id="timerText">
+--
+</div>
+
+</div>
+
+<div class="period">
+
+CURRENT<br>
+<span id="currentPeriod">
+----
+</span>
+
+<br><br>
+
+NEXT<br>
+<span id="nextPeriod">
+----
+</span>
+
+</div>
+
+</div>
+
+<div class="predict">
+
+<div class="predict-title">
+NEXT SIGNAL
+</div>
+
+<div class="predict-main big"
+id="prediction">
+BIG
+</div>
+
+<div class="number"
+id="numberPrediction">
+7
+</div>
+
+<div class="color"
+id="colorPrediction">
+GREEN
+</div>
+
+</div>
+
+<div class="conf">
+
+<div style="margin-bottom:8px">
+
+CONFIDENCE:
+<span id="confText">
+0%
+</span>
+
+</div>
+
+<div class="bar">
+
+<div class="fill"
+id="confFill">
+</div>
+
+</div>
+
+</div>
+
+<!-- PATTERN -->
+
+<div class="pattern-box">
+
+<div class="pattern-title">
+⚡ LIVE PATTERN
+</div>
+
+<div class="pattern-content"
+id="patternText">
+
+ANALYZING...
+
+</div>
+
+</div>
+
+<!-- STATS -->
+
+<div class="stats">
+
+<div class="stat green">
+WIN<br>
+<span id="winCount">
+0
+</span>
+</div>
+
+<div class="stat red">
+LOSS<br>
+<span id="lossCount">
+0
+</span>
+</div>
+
+<div class="stat">
+SIGNAL<br>
+<span id="signalCount">
+0
+</span>
+</div>
+
+<div class="stat">
+STREAK<br>
+<span id="streakCount">
+0
+</span>
+</div>
+
+</div>
+
+</div>
+
+<!-- HISTORY -->
+
+<div class="card">
+
+<h3>
+LIVE HISTORY
+</h3>
+
+<table>
+
+<thead>
+
+<tr>
+<th>PERIOD</th>
+<th>NO</th>
+<th>SIZE</th>
+<th>CLR</th>
+</tr>
+
+</thead>
+
+<tbody id="history">
+
+<tr>
+<td colspan="4">
+LOADING...
+</td>
+</tr>
+
+</tbody>
+
+</table>
+
+</div>
+
+<script>
+
+/* MATRIX */
+
+const c =
+document.getElementById("matrix");
+
+const ctx =
+c.getContext("2d");
+
+function resize(){
+
+c.width=innerWidth;
+c.height=innerHeight;
+
+}
+
+resize();
+
+addEventListener("resize",resize);
+
+const chars =
+"01ABCDEFGHIJKLMNOPQRSTUVWXYZ#$%";
+
+const drops =
+Array(Math.floor(c.width/14)).fill(1);
+
+setInterval(()=>{
+
+ctx.fillStyle =
+"rgba(0,0,0,.05)";
+
+ctx.fillRect(0,0,c.width,c.height);
+
+ctx.fillStyle="#00ffee";
+
+ctx.font="14px monospace";
+
+drops.forEach((y,i)=>{
+
+const t =
+chars[
+Math.floor(
+Math.random()*chars.length
+)
+];
+
+ctx.fillText(t,i*14,y*14);
+
+drops[i] =
+y*14>c.height||Math.random()>.98
+?0
+:y+1;
+
+});
+
+},50);
+
+/* CONFIG */
+
+const API = {
+
+'30s':
+'https://draw.ar-lottery01.com/WinGo/WinGo_30S/GetHistoryIssuePage.json?ts=',
+
+'1m':
+'https://draw.ar-lottery01.com/WinGo/WinGo_1M/GetHistoryIssuePage.json?ts=',
+
+'3m':
+'https://draw.ar-lottery01.com/WinGo/WinGo_3M/GetHistoryIssuePage.json?ts=',
+
+'5m':
+'https://draw.ar-lottery01.com/WinGo/WinGo_5M/GetHistoryIssuePage.json?ts='
+
+};
+
+let currentMode='30s';
+
+let PERIOD_MS=30000;
+
+const CIRCLE=264;
+
+/* ELEMENTS */
+
+const historyEl =
+document.getElementById("history");
+
+/* STATE */
+
+let lastSeenPeriod=null;
+
+let win=0;
+let loss=0;
+let signal=0;
+let streak=0;
+
+let lastPrediction=null;
+let lastPredictionPeriod=null;
+
+let lastSignalMap = {
+
+'30s': null,
+'1m': null,
+'3m': null,
+'5m': null
+
+};
+
+/* UTILS */
+
+function sizeOf(n){
+
+return n>=5
+? 'BIG'
+: 'SMALL';
+
+}
+
+function colorOf(n){
+
+if(n===0||n===5)
+return 'VIOLET';
+
+if([2,4,6,8].includes(n))
+return 'RED';
+
+return 'GREEN';
+
+}
+
+/* TIMER */
+
+function timer(){
+
+const remain =
+PERIOD_MS-(Date.now()%PERIOD_MS);
+
+timerText.innerText =
+Math.ceil(remain/1000)+'s';
+
+timerCircle.style.strokeDasharray =
+CIRCLE;
+
+timerCircle.style.strokeDashoffset =
+CIRCLE*(1-remain/PERIOD_MS);
+
+}
+
+setInterval(timer,1000);
+
+timer();
+
+/* ANALYZE */
+
+function analyze(history){
+
+const H = history.slice(0,25);
+
+let big = 0;
+let small = 0;
+
+let green = 0;
+let red = 0;
+
+let odd = 0;
+let even = 0;
+
+const nums = [];
+const sizes = [];
+const colors = [];
+
+H.forEach((h,i)=>{
+
+const n = h.number;
+
+nums.push(n);
+
+const s = sizeOf(n);
+const c = colorOf(n);
+
+sizes.push(s);
+colors.push(c);
+
+const w = (25-i)/25;
+
+/* BIG SMALL */
+
+if(s==='BIG')
+big += w;
+else
+small += w;
+
+/* COLOR */
+
+if(c==='GREEN')
+green += w;
+
+if(c==='RED')
+red += w;
+
+/* ODD EVEN */
+
+if(n%2===0)
+even += w;
+else
+odd += w;
+
+});
+
+/* STREAK */
+
+let streak = 1;
+
+for(let i=1;i<sizes.length;i++){
+
+if(sizes[i]===sizes[0])
+streak++;
+else
+break;
+
+}
+
+/* COLOR STREAK */
+
+let colorStreak = 1;
+
+for(let i=1;i<colors.length;i++){
+
+if(colors[i]===colors[0])
+colorStreak++;
+else
+break;
+
+}
+
+/* REVERSAL */
+
+if(streak>=4){
+
+if(sizes[0]==='BIG')
+small += 8;
+else
+big += 8;
+
+}
+
+/* CONTINUE */
+
+if(streak===2){
+
+if(sizes[0]==='BIG')
+big += 3;
+else
+small += 3;
+
+}
+
+/* COLOR BREAK */
+
+if(colorStreak>=4){
+
+if(colors[0]==='GREEN')
+red += 6;
+else
+green += 6;
+
+}
+
+/* ZIGZAG */
+
+let zigzag = true;
+
+for(let i=0;i<6;i++){
+
+if(sizes[i]===sizes[i+1]){
+
+zigzag = false;
+break;
+
+}
+
+}
+
+if(zigzag){
+
+if(sizes[0]==='BIG')
+big += 5;
+else
+small += 5;
+
+}
+
+/* SERIAL */
+
+const seq1 =
+nums.slice(0,4).join('');
+
+const seq2 =
+nums.slice(4,8).join('');
+
+if(seq1===seq2){
+
+const next = nums[8];
+
+if(next>=5)
+big += 10;
+else
+small += 10;
+
+}
+
+/* GAP */
+
+let bigGap=0;
+let smallGap=0;
+
+for(let i=0;i<nums.length;i++){
+
+if(nums[i]>=5){
+
+bigGap=i;
+break;
+
+}
+
+}
+
+for(let i=0;i<nums.length;i++){
+
+if(nums[i]<5){
+
+smallGap=i;
+break;
+
+}
+
+}
+
+if(bigGap>=6)
+big += 6;
+
+if(smallGap>=6)
+small += 6;
+
+/* BALANCE */
+
+if(Math.abs(big-small)<=2){
+
+if(Math.random()>.5)
+big += 2;
+else
+small += 2;
+
+}
+
+/* FINAL */
+
+const prediction =
+big>small
+? 'BIG'
+: 'SMALL';
+
+/* NUMBER */
+
+let possible=[];
+
+for(let i=0;i<=9;i++){
+
+if(prediction==='BIG'&&i>=5)
+possible.push(i);
+
+if(prediction==='SMALL'&&i<5)
+possible.push(i);
+
+}
+
+/* REMOVE RECENT */
+
+const recent =
+nums.slice(0,3);
+
+possible =
+possible.filter(
+n=>!recent.includes(n)
+);
+
+/* FREQUENCY */
+
+const freq={};
+
+nums.forEach(n=>{
+
+freq[n]=(freq[n]||0)+1;
+
+});
+
+possible.sort((a,b)=>
+(freq[a]||0)-(freq[b]||0)
+);
+
+let number =
+possible[0];
+
+if(number===undefined){
+
+number =
+prediction==='BIG'
+? 7
+: 2;
+
+}
+
+const color =
+colorOf(number);
+
+/* CONF */
+
+let confidence =
+Math.round(
+60 +
+Math.abs(big-small)*3
+);
+
+confidence =
+Math.max(
+55,
+Math.min(95,confidence)
+);
+
+/* PATTERN */
+
+const patterns=[];
+
+if(streak>=4){
+
+patterns.push(
+`⚠ ${streak}x ${sizes[0]} STREAK BREAK POSSIBLE`
+);
+
+}
+
+if(streak===2){
+
+patterns.push(
+`📈 ${sizes[0]} CONTINUATION ACTIVE`
+);
+
+}
+
+if(colorStreak>=4){
+
+patterns.push(
+`🎨 ${colors[0]} COLOR REVERSAL`
+);
+
+}
+
+if(zigzag){
+
+patterns.push(
+`🔁 ZIGZAG CHAIN RUNNING`
+);
+
+}
+
+if(seq1===seq2){
+
+patterns.push(
+`♻ SERIAL LOOP DETECTED`
+);
+
+}
+
+if(bigGap>=6){
+
+patterns.push(
+`📊 BIG GAP PRESSURE HIGH`
+);
+
+}
+
+if(smallGap>=6){
+
+patterns.push(
+`📊 SMALL GAP PRESSURE HIGH`
+);
+
+}
+
+patterns.push(
+`⚡ ODD/EVEN FLOW ACTIVE`
+);
+
+patterns.push(
+`🔥 TREND ENGINE RUNNING`
+);
+
+const pattern =
+patterns[
+Math.floor(
+Math.random()*patterns.length
+)
+];
+
+return{
+
+prediction,
+confidence,
+number,
+color,
+pattern
+
+};
+
+}
+
+/* POLL */
+
+async function poll(){
+
+try{
+
+const res =
+await fetch(
+API[currentMode]+Date.now()
+);
+
+const j =
+await res.json();
+
+const list =
+j?.data?.list ||
+j?.list ||
+[];
+
+if(!list.length){
+
+historyEl.innerHTML=`
+
+<tr>
+<td colspan="4">
+NO DATA
+</td>
+</tr>
+
+`;
+
+return;
+
+}
+
+const history =
+list.map(x=>({
+
+period:
+x.issueNumber ||
+x.issue,
+
+number:
+Number(x.number)
+
+}));
+
+const current =
+history[0].period;
+
+/* RESULT */
+
+if(
+lastPredictionPeriod &&
+current===lastPredictionPeriod
+){
+
+const actual =
+sizeOf(history[0].number);
+
+if(actual===lastPrediction){
+
+win++;
+streak++;
+
+}else{
+
+loss++;
+streak=0;
+
+}
+
+winCount.innerText=win;
+lossCount.innerText=loss;
+streakCount.innerText=streak;
+
+lastPredictionPeriod=null;
+
+}
+
+/* NEW PERIOD */
+
+if(current!==lastSeenPeriod){
+
+lastSeenPeriod=current;
+
+const next =
+(BigInt(current)+1n)
+.toString();
+
+currentPeriod.innerText =
+String(current).slice(-7);
+
+nextPeriod.innerText =
+String(next).slice(-7);
+
+const r =
+analyze(history);
+
+lastPrediction =
+r.prediction;
+
+lastPredictionPeriod =
+next;
+
+/* SIGNAL FIX */
+
+if(lastSignalMap[currentMode]!==current){
+
+signal++;
+
+signalCount.innerText =
+signal;
+
+lastSignalMap[currentMode]=current;
+
+}
+
+/* UI */
+
+prediction.innerText =
+r.prediction;
+
+prediction.className =
+'predict-main '+
+r.prediction.toLowerCase();
+
+numberPrediction.innerText =
+r.number;
+
+colorPrediction.innerText =
+r.color;
+
+confText.innerText =
+r.confidence+'%';
+
+confFill.style.width =
+r.confidence+'%';
+
+patternText.innerText =
+r.pattern;
+
+/* HISTORY */
+
+historyEl.innerHTML='';
+
+history.slice(0,10).forEach(h=>{
+
+historyEl.innerHTML += `
+
+<tr>
+
+<td>
+${String(h.period).slice(-7)}
+</td>
+
+<td>
+${h.number}
+</td>
+
+<td>
+${sizeOf(h.number)}
+</td>
+
+<td>
+
+<span class="
+dot c-${colorOf(h.number).toLowerCase()}
+"></span>
+
+</td>
+
+</tr>
+
+`;
+
+});
+
+}
+
+}catch(e){
+
+console.log(e);
+
+historyEl.innerHTML=`
+
+<tr>
+<td colspan="4">
+API ERROR
+</td>
+</tr>
+
+`;
+
+}
+
+}
+
+/* MODE */
+
+function changeMode(mode,btn){
+
+currentMode=mode;
+
+if(mode==='30s')
+PERIOD_MS=30000;
+
+if(mode==='1m')
+PERIOD_MS=60000;
+
+if(mode==='3m')
+PERIOD_MS=180000;
+
+if(mode==='5m')
+PERIOD_MS=300000;
+
+document
+.querySelectorAll('.btn')
+.forEach(x=>
+x.classList.remove('active')
+);
+
+btn.classList.add('active');
+
+poll();
+
+}
+
+/* START */
+
+poll();
+
+setInterval(poll,2000);
+
+</script>
+
+</body>
+</html>
